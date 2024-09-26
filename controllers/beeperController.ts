@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { beeperCreateUser, beeperListUser, beeperUser, beeperUpdateUser, beeperDeleteUser, beepersByStatusUser} from "../services/beeperService.js";
-import { Beeper } from "../models/types.js";
+import { Beeper} from "../models/types.js";
 
 
 export const addBeeper = async(req: Request, res: Response):Promise<void> => {
@@ -15,7 +15,7 @@ export const addBeeper = async(req: Request, res: Response):Promise<void> => {
 }
 
 
-export const getAlBeepers = async(res: Response):Promise<void> =>{
+export const getAlBeepers = async(req: Request, res: Response):Promise<void> =>{
     try {
         const beeperList = await beeperListUser();
         res.status(200).json({ beeperlist: beeperList });
@@ -73,9 +73,9 @@ export const deleteBeeper = async(req: Request, res: Response):Promise<void> => 
 
 export const getBeepersByStatus = async(req: Request, res: Response):Promise<void> =>{
     try{
-        const Status = req.params.status;
+        const statusBeepers = req.params.status;
 
-        const beeperList = await beepersByStatusUser(Status);
+        const beeperList = await beepersByStatusUser(statusBeepers);
         if (beeperList.length === 0) {
             res.status(404).json({ message: "No beepers found for this status" });
             return;

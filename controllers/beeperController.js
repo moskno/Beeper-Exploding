@@ -18,7 +18,7 @@ export const addBeeper = (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ message: "Failed to add beeper" });
     }
 });
-export const getAlBeepers = (res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getAlBeepers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const beeperList = yield beeperListUser();
         res.status(200).json({ beeperlist: beeperList });
@@ -71,8 +71,8 @@ export const deleteBeeper = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 export const getBeepersByStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const Status = req.params.status;
-        const beeperList = yield beepersByStatusUser(Status);
+        const statusBeepers = req.params.status;
+        const beeperList = yield beepersByStatusUser(statusBeepers);
         if (beeperList.length === 0) {
             res.status(404).json({ message: "No beepers found for this status" });
             return;

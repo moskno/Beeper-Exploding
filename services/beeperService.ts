@@ -48,7 +48,6 @@ export const beeperUser = async (id: string): Promise<Beeper> => {
 };
 
 
-
 export const beeperUpdateUser = async(id: string): Promise<string | null> => {
     const beepers: Beeper[] = await readFromJsonFile();
     const beeper = beepers.find((b) => b.id === id);
@@ -66,8 +65,6 @@ export const beeperUpdateUser = async(id: string): Promise<string | null> => {
 };
 
 
-
-// beeperDeleteUser, 
 export const beeperDeleteUser = async(id: string): Promise<void> => {
     const beepers: Beeper[] = await readFromJsonFile();
     const beeper = beepers.findIndex((b) => b.id === id);
@@ -80,8 +77,8 @@ export const beeperDeleteUser = async(id: string): Promise<void> => {
     await writeUserToJsonFile(beepers);
 };
 
-// beepersByStatusUser
-export const beepersByStatusUser = async (status: string): Promise<Beeper[]> => {
+
+export const beepersByStatusUser = async(status: string): Promise<Beeper[]> => {
     const beepers: Beeper[] = await readFromJsonFile();
     const beepersByStatus = beepers.filter((b) => b.status === status);
     if(beepersByStatus.length === 0){

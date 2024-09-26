@@ -44,13 +44,11 @@ export const beeperUpdateUser = (id) => __awaiter(void 0, void 0, void 0, functi
     if (!beeper) {
         return null;
     }
-    //   beeper.status = BeeperStatus.deployed;
+    beeper.status = BeeperStatus.deployed; // Type assertion to string
     yield writeUserToJsonFile(beepers);
     const status = BeeperStatus.manufactured;
-    yield writeUserToJsonFile(beeper);
-    return status;
+    return status.toString();
 });
-// beeperDeleteUser, 
 export const beeperDeleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const beepers = yield readFromJsonFile();
     const beeper = beepers.findIndex((b) => b.id === id);
@@ -60,7 +58,6 @@ export const beeperDeleteUser = (id) => __awaiter(void 0, void 0, void 0, functi
     beepers.splice(beeper, 1);
     yield writeUserToJsonFile(beepers);
 });
-// beepersByStatusUser
 export const beepersByStatusUser = (status) => __awaiter(void 0, void 0, void 0, function* () {
     const beepers = yield readFromJsonFile();
     const beepersByStatus = beepers.filter((b) => b.status === status);
