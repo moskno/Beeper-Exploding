@@ -2,10 +2,12 @@
   "dependencies": {
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.0",
+    "@types/jsonfile": "^6.1.4",
     "@types/typescript": "^0.4.29",
     "dotenv": "^16.4.5",
     "env": "^0.0.2",
     "express": "^4.21.0",
+    "jsonfile": "^6.1.0",
     "luxon": "^3.5.0",
     "tsc": "^2.0.4",
     "uuidv4": "^6.2.13"

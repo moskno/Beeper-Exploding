@@ -1,7 +1,7 @@
 export enum BeeperStatus {
-    MANUFACTURED,
-    ASSEMBLED,
-    SHIPPED,
-    DEPLOYED,
-    DETONATED
+    manufactured,
+    assembled,
+    shipped,
+    deployed,
+    detonated
 }
