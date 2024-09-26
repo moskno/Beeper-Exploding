@@ -38,16 +38,42 @@ export const beeperUser = (id) => __awaiter(void 0, void 0, void 0, function* ()
     }
     return beeper;
 });
-export const beeperUpdateUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+export const updateBeeperStatusToDetonated = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const beepers = yield readFromJsonFile();
+    const beeper = beepers.find((b) => b.id === id);
+    if (beeper) {
+        beeper.status = BeeperStatus.detonated.toString();
+        beeper.explodingTime = new Date();
+        yield writeUserToJsonFile(beepers);
+    }
+});
+export const beeperUpdateUser = (id, lat, lon) => __awaiter(void 0, void 0, void 0, function* () {
     const beepers = yield readFromJsonFile();
     const beeper = beepers.find((b) => b.id === id);
     if (!beeper) {
         return null;
     }
-    beeper.status = BeeperStatus.deployed; // Type assertion to string
+    switch (beeper.status) {
+        case BeeperStatus.manufactured.toString():
+            beeper.status = BeeperStatus.assembled.toString();
+            break;
+        case BeeperStatus.assembled.toString():
+            beeper.status = BeeperStatus.shipped.toString();
+            break;
+        case BeeperStatus.shipped.toString():
+            beeper.status = BeeperStatus.deployed.toString();
+            break;
+        case BeeperStatus.deployed.toString():
+            if (lat !== undefined && lon !== undefined) {
+                beeper.latitude = lat;
+                beeper.longitude = lon;
+            }
+            break;
+        default:
+            return null;
+    }
     yield writeUserToJsonFile(beepers);
-    const status = BeeperStatus.manufactured;
-    return status.toString();
+    return beeper.status.toString();
 });
 export const beeperDeleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const beepers = yield readFromJsonFile();

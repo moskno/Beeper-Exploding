@@ -47,21 +47,45 @@ export const beeperUser = async (id: string): Promise<Beeper> => {
     return beeper;
 };
 
+export const updateBeeperStatusToDetonated = async (id: string): Promise<void> => {
+    const beepers: Beeper[] = await readFromJsonFile();
+    const beeper = beepers.find((b) => b.id === id);
+    
+    if (beeper) {
+        beeper.status = BeeperStatus.detonated.toString();
+        beeper.explodingTime = new Date(); 
+        await writeUserToJsonFile(beepers);
+    }
+};
 
-export const beeperUpdateUser = async(id: string): Promise<string | null> => {
+export const beeperUpdateUser = async(id: string, lat?: number, lon?: number): Promise<string | null> => {
     const beepers: Beeper[] = await readFromJsonFile();
     const beeper = beepers.find((b) => b.id === id);
     if(!beeper){
         return null;
       }
     
-      beeper.status = BeeperStatus.deployed as unknown as string; // Type assertion to string
-    
-    await writeUserToJsonFile(beepers);
-
-    const status: BeeperStatus = BeeperStatus.manufactured;
-    
-    return status.toString();
+      switch (beeper.status) {
+        case BeeperStatus.manufactured.toString():
+            beeper.status = BeeperStatus.assembled.toString();
+            break;
+        case BeeperStatus.assembled.toString():
+            beeper.status = BeeperStatus.shipped.toString();
+            break;
+        case BeeperStatus.shipped.toString():
+            beeper.status = BeeperStatus.deployed.toString();
+            break;
+        case BeeperStatus.deployed.toString():
+            if (lat !== undefined && lon !== undefined) {
+                beeper.latitude = lat;
+                beeper.longitude = lon;
+            }
+            break;
+        default:
+            return null;
+    }    
+    await writeUserToJsonFile(beepers);    
+    return beeper.status.toString();
 };
 
 

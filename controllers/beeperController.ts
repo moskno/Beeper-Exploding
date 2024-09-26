@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { beeperCreateUser, beeperListUser, beeperUser, beeperUpdateUser, beeperDeleteUser, beepersByStatusUser} from "../services/beeperService.js";
+import { beeperCreateUser, beeperListUser, beeperUser, beeperUpdateUser, beeperDeleteUser, beepersByStatusUser, updateBeeperStatusToDetonated} from "../services/beeperService.js";
 import { Beeper} from "../models/types.js";
+import { BeeperStatus } from "../lists - enums/statusEnum.js";
 
 
 export const addBeeper = async(req: Request, res: Response):Promise<void> => {
@@ -44,13 +45,24 @@ export const getBeeperById = async(req: Request, res: Response):Promise<void> =>
 export const updateBeeper = async(req: Request, res: Response):Promise<void> => {
     try {
         const beeperId = req.params.id;
-        const statusBeeper = await beeperUpdateUser(beeperId);
+        const {lat, lon} = req.body;
+        
+        const statusBeeper = await beeperUpdateUser(beeperId, lat, lon);
         if (!statusBeeper) {
             res.status(404).json({ message: "Beeper not found" });
             return
         }
         res.status(200).send(`Status is updated to ${statusBeeper}`);
         
+        if(statusBeeper === BeeperStatus.deployed.toString()){
+            if (lat !== undefined && lon !== undefined){
+                setTimeout(async () => {
+                    await updateBeeperStatusToDetonated (beeperId);
+                }, 10000);
+            } else {
+                res.status(400).json({message: "Latitude and longitude are required for deployed status"})
+            }
+        }
     } catch (error) {
         res.status(500).json({ message: "Failed to update beeper status" });
     }

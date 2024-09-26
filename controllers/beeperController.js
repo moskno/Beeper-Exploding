@@ -7,7 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { beeperCreateUser, beeperListUser, beeperUser, beeperUpdateUser, beeperDeleteUser, beepersByStatusUser } from "../services/beeperService.js";
+import { beeperCreateUser, beeperListUser, beeperUser, beeperUpdateUser, beeperDeleteUser, beepersByStatusUser, updateBeeperStatusToDetonated } from "../services/beeperService.js";
+import { BeeperStatus } from "../lists - enums/statusEnum.js";
 export const addBeeper = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name } = req.body;
@@ -44,12 +45,23 @@ export const getBeeperById = (req, res) => __awaiter(void 0, void 0, void 0, fun
 export const updateBeeper = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const beeperId = req.params.id;
-        const statusBeeper = yield beeperUpdateUser(beeperId);
+        const { lat, lon } = req.body;
+        const statusBeeper = yield beeperUpdateUser(beeperId, lat, lon);
         if (!statusBeeper) {
             res.status(404).json({ message: "Beeper not found" });
             return;
         }
         res.status(200).send(`Status is updated to ${statusBeeper}`);
+        if (statusBeeper === BeeperStatus.deployed.toString()) {
+            if (lat !== undefined && lon !== undefined) {
+                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                    yield updateBeeperStatusToDetonated(beeperId);
+                }), 10000);
+            }
+            else {
+                res.status(400).json({ message: "Latitude and longitude are required for deployed status" });
+            }
+        }
     }
     catch (error) {
         res.status(500).json({ message: "Failed to update beeper status" });
